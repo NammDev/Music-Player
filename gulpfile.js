@@ -9,7 +9,7 @@ function buildStyles() {
       purgecss({
         content: ['*.html'],
         safelist: {
-          standard: [/img/],
+          standard: [/img/, /active/],
           deep: [/song/, /player/],
         },
       })

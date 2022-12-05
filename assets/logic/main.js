@@ -1,14 +1,5 @@
 /**
- * 1. Render songs
- * 2. Scroll top
- * 3. Play / Pause / Seek
- * 4. CD rotate
- * 5. Next / prev
- * 6. Random
- * 7. Next / Repeat when ended
- * 8. Actice song
- * 9. Scroll active song into view
- * 10. Play song when click
+ * 11. Hạn chế lặp lại danh sách
  */
 
 // API
@@ -23,12 +14,14 @@ const playerElement = query('.player')
 const titleHeaderElement = query('.header h2')
 const cdElement = query('.cd')
 const cdThumbElement = query('.cd-thumb')
+const repeatBtnElement = query('.btn-repeat')
 const playButtonElement = query('.btn-toggle-play')
 const nextButtonElement = query('.btn-next')
 const prevButtonElement = query('.btn-prev')
+const randomButtonElement = query('.btn-random')
 const progressElement = query('#progress')
 const audioElement = query('#audio')
-
+const playlistElement = query('.playlist')
 const cdWidth = cdElement.offsetWidth
 
 // Fetch Data
@@ -43,6 +36,8 @@ getData(SONG_API, begin)
 function begin(data) {
   const app = {
     currentId: 0,
+    isRandom: false,
+    isRepeat: false,
     songs: [],
     defineProperties() {
       Object.defineProperty(this, 'currentSong', {
@@ -70,8 +65,8 @@ function begin(data) {
       query('.playlist').innerHTML = html.join('')
     },
     loadCurrentSong() {
-      const songsElement = queryAll('.song')
-      for (const song of songsElement) {
+      const songs = queryAll('.song')
+      for (const song of songs) {
         if (song.getAttribute('data-index') == this.currentId) {
           song.classList.add('active')
         } else {
@@ -130,33 +125,87 @@ function begin(data) {
       }
       // Listen Next Button song
       nextButtonElement.onclick = (e) => {
-        this.currentId++
-        if (this.currentId >= this.songs.length) {
-          this.currentId = 0
-        }
-        this.loadCurrentSong()
-        audioElement.play()
+        this.playNextSong(true)
       }
-      // Listen
+      // Listen Prev Button Song
       prevButtonElement.onclick = (e) => {
-        this.currentId--
-        if (this.currentId < 0) {
-          this.currentId = this.songs.length - 1
+        this.playNextSong(false)
+      }
+      // Feature Random
+      randomButtonElement.onclick = (e) => {
+        this.isRandom = !this.isRandom
+        randomButtonElement.classList.toggle('active', this.isRandom)
+      }
+      // Feature Repeat Song
+      repeatBtnElement.onclick = (e) => {
+        this.isRepeat = !this.isRepeat
+        repeatBtnElement.classList.toggle('active', this.isRepeat)
+      }
+      // Handle when song end
+      audioElement.onended = () => {
+        if (!this.isRepeat) {
+          this.playNextSong(true)
+        } else {
+          this.loadCurrentSong()
+          audioElement.play()
+          this.scrollToView()
         }
-        this.loadCurrentSong()
-        audioElement.play()
+      }
+      // Listen click on Song Element
+      playlistElement.onclick = (e) => {
+        if (
+          e.target.closest('.song:not(.active)') &&
+          !e.target.closest('.option')
+        ) {
+          this.currentId = e.target.closest('.song').getAttribute('data-index')
+          this.loadCurrentSong()
+          audioElement.play()
+          this.scrollToView()
+        }
       }
     },
-    playingSong(cdThumbAnimation) {
+    playingSong(animation) {
       if (audioElement.paused) {
         audioElement.play()
-        cdThumbAnimation.play()
+        animation.play()
         playerElement.classList.add('playing')
       } else {
         audioElement.pause()
-        cdThumbAnimation.pause()
+        animation.pause()
         playerElement.classList.remove('playing')
       }
+    },
+    randomSong() {
+      let newIndex
+      do {
+        newIndex = Math.floor(Math.random() * this.songs.length)
+      } while (newIndex === this.currentId)
+      this.currentId = newIndex
+    },
+    playNextSong(isNext) {
+      if (!this.isRandom) {
+        if (isNext) {
+          this.currentId++
+          if (this.currentId >= this.songs.length) {
+            this.currentId = 0
+          }
+        } else {
+          this.currentId--
+          if (this.currentId < 0) {
+            this.currentId = this.songs.length - 1
+          }
+        }
+      } else {
+        this.randomSong()
+      }
+      this.loadCurrentSong()
+      audioElement.play()
+      this.scrollToView()
+    },
+    scrollToView() {
+      setTimeout(() => {
+        query('.song.active').scrollIntoView()
+      }, 200)
     },
     start() {
       this.songs.push(...data)

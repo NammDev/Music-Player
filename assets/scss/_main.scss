@@ -62,8 +62,13 @@ body {
       padding: 18px;
       font-size: 18px;
       cursor: pointer;
+      transition: all 0.3s ease;
       &.active {
         color: $color-primary;
+      }
+      &:hover {
+        color: $color-primary;
+        transform: scale(1.2);
       }
     }
     .btn-toggle-play {
@@ -77,13 +82,9 @@ body {
       justify-content: center;
       background-color: $color-primary;
       cursor: pointer;
-    }
-    .btn-prev,
-    .btn-next {
-      transition: all 0.3s ease;
       &:hover {
-        color: $color-primary;
-        transform: scale(1.2);
+        color: #fff;
+        transform: scale(1.1);
       }
     }
   }
@@ -110,6 +111,8 @@ body {
     padding: 8px 16px;
     border-radius: 5px;
     box-shadow: 0 2px 3px rgb(0 0 0 / 10%);
+    transition: all 0.3 ease;
+    cursor: pointer;
 
     .thumb {
       width: 44px;
@@ -135,8 +138,11 @@ body {
       padding: 16px 8px;
       color: #999;
       font-size: 18px;
+      &:hover {
+        color: $color-primary;
+        transform: scale(1.2);
+      }
     }
-
     &.active {
       background-color: $color-primary;
       .option,
@@ -144,6 +150,9 @@ body {
       .title {
         color: white;
       }
+    }
+    &:active {
+      opacity: 0.8;
     }
   }
 }
