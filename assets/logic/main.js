@@ -4,6 +4,7 @@
 
 // API
 const SONG_API = 'http://localhost:3000/songs'
+const LOCAL_KEY = 'USER_HABBIT'
 
 // Tricks
 const query = document.querySelector.bind(document)
@@ -39,6 +40,11 @@ function begin(data) {
     isRandom: false,
     isRepeat: false,
     songs: [],
+    userSetting: JSON.parse(localStorage.getItem(LOCAL_KEY)) || {},
+    setStorage(key, value) {
+      this.userSetting[key] = value
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(this.userSetting))
+    },
     defineProperties() {
       Object.defineProperty(this, 'currentSong', {
         get() {
@@ -134,11 +140,13 @@ function begin(data) {
       // Feature Random
       randomButtonElement.onclick = (e) => {
         this.isRandom = !this.isRandom
+        this.setStorage('isRandom', this.isRandom)
         randomButtonElement.classList.toggle('active', this.isRandom)
       }
       // Feature Repeat Song
       repeatBtnElement.onclick = (e) => {
         this.isRepeat = !this.isRepeat
+        this.setStorage('isRepeat', this.isRepeat)
         repeatBtnElement.classList.toggle('active', this.isRepeat)
       }
       // Handle when song end
@@ -153,14 +161,13 @@ function begin(data) {
       }
       // Listen click on Song Element
       playlistElement.onclick = (e) => {
-        if (
-          e.target.closest('.song:not(.active)') &&
-          !e.target.closest('.option')
-        ) {
-          this.currentId = e.target.closest('.song').getAttribute('data-index')
+        const songNode = e.target.closest('.song:not(.active)')
+        if (songNode && !e.target.closest('.option')) {
+          this.currentId = songNode.dataset.index
           this.loadCurrentSong()
-          audioElement.play()
           this.scrollToView()
+
+          audioElement.play()
         }
       }
     },
@@ -207,9 +214,22 @@ function begin(data) {
         query('.song.active').scrollIntoView()
       }, 200)
     },
+    getLocalStorage() {
+      this.isRandom =
+        this.userSetting['isRandom'] === undefined
+          ? false
+          : this.userSetting['isRandom']
+      this.isRepeat =
+        this.userSetting['isRepeat'] === undefined
+          ? false
+          : this.userSetting['isRepeat']
+      randomButtonElement.classList.toggle('active', this.isRandom)
+      repeatBtnElement.classList.toggle('active', this.isRepeat)
+    },
     start() {
       this.songs.push(...data)
       this.defineProperties()
+      this.getLocalStorage()
       this.renderData()
       this.loadCurrentSong()
       this.handleEvent()
