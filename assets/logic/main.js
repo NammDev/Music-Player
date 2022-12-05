@@ -25,8 +25,11 @@ const cdElement = query('.cd')
 const cdThumbElement = query('.cd-thumb')
 const playButtonElement = query('.btn-toggle-play')
 const nextButtonElement = query('.btn-next')
+const prevButtonElement = query('.btn-prev')
 const progressElement = query('#progress')
 const audioElement = query('#audio')
+
+const cdWidth = cdElement.offsetWidth
 
 // Fetch Data
 function getData(api, cb) {
@@ -67,7 +70,16 @@ function begin(data) {
       query('.playlist').innerHTML = html.join('')
     },
     loadCurrentSong() {
-      queryAll('.song')[this.currentId].classList.add('active')
+      const songsElement = queryAll('.song')
+      for (const song of songsElement) {
+        if (song.getAttribute('data-index') == this.currentId) {
+          song.classList.add('active')
+        } else {
+          if (song.classList.contains('active')) {
+            song.classList.remove('active')
+          }
+        }
+      }
       titleHeaderElement.innerText = this.currentSong['name']
       cdThumbElement.style = `background-image: url('${
         this.songs[this.currentId]['image']
@@ -78,10 +90,9 @@ function begin(data) {
       // Listen scroll
       document.onscroll = () => {
         const scrollTop = window.scrollY
-        const cdWidth = cdElement.offsetWidth
         const newCdWidth = cdWidth - scrollTop
-        cd.style.width = newCdWidth > 10 ? `${newCdWidth}px` : 0
-        cd.style.opacity = newCdWidth / cdWidth
+        cdElement.style.width = newCdWidth > 10 ? `${newCdWidth}px` : 0
+        cdElement.style.opacity = newCdWidth / cdWidth
       }
       // CD Thumb
       const cdThumbAnimation = cdThumbElement.animate(
@@ -117,21 +128,35 @@ function begin(data) {
         const seekTime = (audioElement.duration * e.target.value) / 100
         audioElement.currentTime = seekTime
       }
-      // Liste Next song
+      // Listen Next Button song
       nextButtonElement.onclick = (e) => {
         this.currentId++
+        if (this.currentId >= this.songs.length) {
+          this.currentId = 0
+        }
         this.loadCurrentSong()
+        audioElement.play()
+      }
+      // Listen
+      prevButtonElement.onclick = (e) => {
+        this.currentId--
+        if (this.currentId < 0) {
+          this.currentId = this.songs.length - 1
+        }
+        this.loadCurrentSong()
+        audioElement.play()
       }
     },
     playingSong(cdThumbAnimation) {
       if (audioElement.paused) {
         audioElement.play()
         cdThumbAnimation.play()
+        playerElement.classList.add('playing')
       } else {
         audioElement.pause()
         cdThumbAnimation.pause()
+        playerElement.classList.remove('playing')
       }
-      playerElement.classList.toggle('playing')
     },
     start() {
       this.songs.push(...data)

@@ -34,6 +34,7 @@ body {
     h2 {
       color: $text-color;
       font-size: 20px;
+      text-transform: capitalize;
     }
   }
 
@@ -77,6 +78,14 @@ body {
       background-color: $color-primary;
       cursor: pointer;
     }
+    .btn-prev,
+    .btn-next {
+      transition: all 0.3s ease;
+      &:hover {
+        color: $color-primary;
+        transform: scale(1.2);
+      }
+    }
   }
 
   .progress {
@@ -115,6 +124,7 @@ body {
       .title {
         font-size: 18px;
         color: $text-color;
+        text-transform: capitalize;
       }
       .author {
         font-size: 12px;
@@ -137,3 +147,5 @@ body {
     }
   }
 }
+
+// Fixed
