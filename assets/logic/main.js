@@ -11,129 +11,135 @@
  * 10. Play song when click
  */
 
+// API
 const SONG_API = 'http://localhost:3000/songs'
+
+// Tricks
 const query = document.querySelector.bind(document)
 const queryAll = document.querySelectorAll.bind(document)
 
-const app = {}
+// Element
+const playerElement = query('.player')
+const titleHeaderElement = query('.header h2')
+const cdElement = query('.cd')
+const cdThumbElement = query('.cd-thumb')
+const playButtonElement = query('.btn-toggle-play')
+const nextButtonElement = query('.btn-next')
+const progressElement = query('#progress')
+const audioElement = query('#audio')
 
-var songs = []
-
-function start() {
-  getData(SONG_API, renderData)
-  handleEvent()
-  console.log(songs)
-}
-
-start()
-
-function handleEvent() {
-  const playerElement = query('.player')
-  const audio = query('#audio')
-  const playButtonElement = query('.btn-toggle-play')
-  const progressElement = query('#progress')
-  const cd = query('.cd')
-  const cdThumb = query('.cd-thumb')
-  const nextButtonElement = query('.btn-next')
-  const cdWidth = cd.offsetWidth
-  var songs = []
-
-  // listen scroll
-  document.onscroll = () => {
-    const scrollTop = window.scrollY
-    const newCdWidth = cdWidth - scrollTop
-    cd.style.width = newCdWidth > 10 ? `${newCdWidth}px` : 0
-    cd.style.opacity = newCdWidth / cdWidth
-  }
-
-  // cd Thumb
-  const cdThumbAnimation = cdThumb.animate([{ transform: 'rotate(360deg)' }], {
-    duration: 10000,
-    iterations: Infinity,
-  })
-  cdThumbAnimation.pause()
-
-  // listen playing keyboard
-  document.onkeydown = (e) => {
-    if (e.code === 'Space') {
-      e.preventDefault()
-      playingSong(audio, playerElement, cdThumbAnimation)
-    }
-  }
-
-  // listen playing button
-  playButtonElement.onclick = () => {
-    playingSong(audio, playerElement, cdThumbAnimation)
-  }
-
-  // listen audio
-  audio.ontimeupdate = () => {
-    var progress = Math.floor((audio.currentTime / audio.duration) * 100)
-    if (!isNaN(progress)) {
-      progressElement.value = progress
-    }
-  }
-
-  // listen progress
-  progressElement.onchange = (e) => {
-    const seekTime = (audio.duration * e.target.value) / 100
-    audio.currentTime = seekTime
-  }
-
-  // Next song
-  nextButtonElement.onclick = (e) => {
-    playingSong(audio, playerElement, cdThumbAnimation)
-  }
-}
-
+// Fetch Data
 function getData(api, cb) {
   fetch(api)
     .then((response) => response.json())
     .then(cb)
 }
 
-function renderData(data) {
-  let currentIndex = 0
-  let html = data.map((song) => {
-    return `
-    <div class="song" data-index="${song['id']}">
-      <div class="thumb"
-           style="background-image: url('${song['image']}');">
-      </div>
-      <div class="body">
-        <h3 class="title">${song['name']}</h3>
-        <p class="author">${song['singer']}</p>
-      </div>
-      <div class="option">
-        <i class="fas fa-ellipsis-h"></i>
-      </div>
-    </div>`
-  })
-  query('.playlist').innerHTML = html.join('')
-  loadSong(data, currentIndex)
-  songs.push(...data)
-}
+getData(SONG_API, begin)
 
-function loadSong(songs, id) {
-  const audio = query('#audio')
-  // add active
-  query('.song').classList.add('active')
-  // add title
-  query('.header h2').innerText = songs[id]['name']
-  // add image for cd
-  query('.cd-thumb').style = `background-image: url('${songs[id]['image']}');`
-  // add src to audio
-  audio.src = songs[id]['path']
-}
-
-function playingSong(audio, player, cdThumb) {
-  if (audio.paused) {
-    audio.play()
-    cdThumb.play()
-  } else {
-    audio.pause()
-    cdThumb.pause()
+function begin(data) {
+  const app = {
+    currentId: 0,
+    songs: [],
+    defineProperties() {
+      Object.defineProperty(this, 'currentSong', {
+        get() {
+          return this.songs[this.currentId]
+        },
+      })
+    },
+    renderData() {
+      const html = this.songs.map((song) => {
+        return `
+        <div class="song" data-index="${song['id']}">
+          <div class="thumb"
+               style="background-image: url('${song['image']}');">
+          </div>
+          <div class="body">
+            <h3 class="title">${song['name']}</h3>
+            <p class="author">${song['singer']}</p>
+          </div>
+          <div class="option">
+            <i class="fas fa-ellipsis-h"></i>
+          </div>
+        </div>`
+      })
+      query('.playlist').innerHTML = html.join('')
+    },
+    loadCurrentSong() {
+      queryAll('.song')[this.currentId].classList.add('active')
+      titleHeaderElement.innerText = this.currentSong['name']
+      cdThumbElement.style = `background-image: url('${
+        this.songs[this.currentId]['image']
+      }');`
+      audioElement.src = this.songs[this.currentId]['path']
+    },
+    handleEvent() {
+      // Listen scroll
+      document.onscroll = () => {
+        const scrollTop = window.scrollY
+        const cdWidth = cdElement.offsetWidth
+        const newCdWidth = cdWidth - scrollTop
+        cd.style.width = newCdWidth > 10 ? `${newCdWidth}px` : 0
+        cd.style.opacity = newCdWidth / cdWidth
+      }
+      // CD Thumb
+      const cdThumbAnimation = cdThumbElement.animate(
+        [{ transform: 'rotate(360deg)' }],
+        {
+          duration: 10000,
+          iterations: Infinity,
+        }
+      )
+      cdThumbAnimation.pause()
+      // Listen press keyboard
+      document.onkeydown = (e) => {
+        if (e.code === 'Space') {
+          e.preventDefault()
+          this.playingSong(cdThumbAnimation)
+        }
+      }
+      // Listen playing button
+      playButtonElement.onclick = () => {
+        this.playingSong(cdThumbAnimation)
+      }
+      // Listen audio to asign value for input[range]
+      audioElement.ontimeupdate = () => {
+        var progress = Math.floor(
+          (audioElement.currentTime / audioElement.duration) * 100
+        )
+        if (!isNaN(progress)) {
+          progressElement.value = progress
+        }
+      }
+      // Listen Input Range to change progress of song
+      progressElement.onchange = (e) => {
+        const seekTime = (audioElement.duration * e.target.value) / 100
+        audioElement.currentTime = seekTime
+      }
+      // Liste Next song
+      nextButtonElement.onclick = (e) => {
+        this.currentId++
+        this.loadCurrentSong()
+      }
+    },
+    playingSong(cdThumbAnimation) {
+      if (audioElement.paused) {
+        audioElement.play()
+        cdThumbAnimation.play()
+      } else {
+        audioElement.pause()
+        cdThumbAnimation.pause()
+      }
+      playerElement.classList.toggle('playing')
+    },
+    start() {
+      this.songs.push(...data)
+      this.defineProperties()
+      this.renderData()
+      this.loadCurrentSong()
+      this.handleEvent()
+    },
   }
-  // button
-  player.classList.toggle('playing')
+  app.start()
 }
