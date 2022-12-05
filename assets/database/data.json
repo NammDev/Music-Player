@@ -1,0 +1,53 @@
+{
+  "songs": [
+    {
+      "id": 0,
+      "name": "Waka Waka",
+      "singer": "Shakira",
+      "path": "./assets/audio/wakawaka.mp3",
+      "image": "https://goalballlive.com/wp-content/uploads/2020/12/Download-Shakira-Waka-Waka-FIFA-World-Cup-2010-Mp3-Song-1.jpg"
+    },
+    {
+      "id": 1,
+      "name": "Tu Phir Se Aana",
+      "singer": "Raftaar x Salim Merchant x Karma",
+      "path": "https://mp3.vlcmusic.com/download.php?track_id=34213&format=320",
+      "image": "https://1.bp.blogspot.com/-kX21dGUuTdM/X85ij1SBeEI/AAAAAAAAKK4/feboCtDKkls19cZw3glZWRdJ6J8alCm-gCNcBGAsYHQ/s16000/Tu%2BAana%2BPhir%2BSe%2BRap%2BSong%2BLyrics%2BBy%2BRaftaar.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Naachne Ka Shaunq",
+      "singer": "Raftaar x Brobha V",
+      "path": "https://mp3.filmysongs.in/download.php?id=Naachne Ka Shaunq Raftaar Ft Brodha V Mp3 Hindi Song Filmysongs.co.mp3",
+      "image": "https://i.ytimg.com/vi/QvswgfLDuPg/maxresdefault.jpg"
+    },
+    {
+      "id": 3,
+      "name": "Mantoiyat",
+      "singer": "Raftaar x Nawazuddin Siddiqui",
+      "path": "https://mp3.vlcmusic.com/download.php?track_id=14448&format=320",
+      "image": "https://a10.gaanacdn.com/images/song/39/24225939/crop_480x480_1536749130.jpg"
+    },
+    {
+      "id": 4,
+      "name": "Aage Chal",
+      "singer": "Raftaar",
+      "path": "https://mp3.vlcmusic.com/download.php?track_id=25791&format=320",
+      "image": "https://a10.gaanacdn.com/images/albums/72/3019572/crop_480x480_3019572.jpg"
+    },
+    {
+      "id": 5,
+      "name": "Damn",
+      "singer": "Raftaar x kr$na",
+      "path": "https://mp3.filmisongs.com/go.php?id=Damn%20Song%20Raftaar%20Ft%20KrSNa.mp3",
+      "image": "https://i.discogs.com/xCYSQK3tBLUJqmoqi08VLPBCIPMX1J-TKSaohDaOwFc/rs:fit/g:sm/q:90/h:491/w:486/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTQ3NDM3/MjAtMTM3NDA5ODE4/Ny05MDYyLmpwZWc.jpeg"
+    },
+    {
+      "id": 6,
+      "name": "Feeling You",
+      "singer": "Raftaar x Harjas",
+      "path": "https://mp3.vlcmusic.com/download.php?track_id=27145&format=320",
+      "image": "https://a10.gaanacdn.com/gn_img/albums/YoEWlabzXB/oEWlj5gYKz/size_xxl_1586752323.webp"
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+$grid-columns: 12;
+$grid-offset: 11;
+
+@mixin devidedCol($name) {
+  @for $i from 1 through $grid-columns {
+    .#{$name}-#{$i} {
+      display: block;
+      flex: 0 0 calc((1 / 12) * $i * 100%);
+      max-width: calc((1 / 12) * $i * 100%);
+    }
+  }
+}
+
+@mixin devidedOffset($name) {
+  @for $i from 1 through $grid-offset {
+    .#{$name}-o-#{$i} {
+      margin-left: calc((1 / 12) * $i * 100%);
+    }
+  }
+}
+
+.grid {
+  width: 100%;
+  display: block;
+  &.wide {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -4px;
+  margin-right: -4px;
+  .col {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+}
+
+.c-0 {
+  display: none;
+}
+
+@include devidedCol(c);
+@include devidedOffset(c);
+
+/* >= Tablet */
+@media (min-width: 740px) {
+  .row {
+    margin-left: -8px;
+    margin-right: -8px;
+    .col {
+      padding-left: 8px;
+      padding-right: 8px;
+    }
+  }
+
+  .m-0 {
+    display: none;
+  }
+
+  @include devidedCol(m);
+  @include devidedOffset(m);
+}
+
+/* PC medium resolution > */
+@media (min-width: 1113px) {
+  .row {
+    margin-left: -12px;
+    margin-right: -12px;
+    .col {
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+  }
+
+  .l-0 {
+    display: none;
+  }
+
+  .l-2-4 {
+    display: block;
+    flex: 0 0 20%;
+    max-width: 20%;
+  }
+
+  @include devidedCol(l);
+  @include devidedOffset(l);
+}
+
+/* Tablet - PC low resolution */
+@media (min-width: 740px) and (max-width: 1023px) {
+  .wide {
+    width: 644px;
+  }
+}
+
+/* > PC low resolution */
+@media (min-width: 1024px) and (max-width: 1239px) {
+  .wide {
+    width: 984px;
+    .row {
+      margin-left: -12px;
+      margin-right: -12px;
+      .col {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+    }
+    .l-0 {
+      display: none;
+    }
+    .l-2-4 {
+      display: block;
+      flex: 0 0 20%;
+      max-width: 20%;
+    }
+    @include devidedCol(l);
+    @include devidedOffset(l);
+  }
+}
