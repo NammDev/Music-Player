@@ -15,9 +15,14 @@ const SONG_API = 'http://localhost:3000/songs'
 const query = document.querySelector.bind(document)
 const queryAll = document.querySelectorAll.bind(document)
 
+const app = {}
+
+var songs = []
+
 function start() {
   getData(SONG_API, renderData)
   handleEvent()
+  console.log(songs)
 }
 
 start()
@@ -29,7 +34,9 @@ function handleEvent() {
   const progressElement = query('#progress')
   const cd = query('.cd')
   const cdThumb = query('.cd-thumb')
+  const nextButtonElement = query('.btn-next')
   const cdWidth = cd.offsetWidth
+  var songs = []
 
   // listen scroll
   document.onscroll = () => {
@@ -72,6 +79,11 @@ function handleEvent() {
     const seekTime = (audio.duration * e.target.value) / 100
     audio.currentTime = seekTime
   }
+
+  // Next song
+  nextButtonElement.onclick = (e) => {
+    playingSong(audio, playerElement, cdThumbAnimation)
+  }
 }
 
 function getData(api, cb) {
@@ -98,11 +110,11 @@ function renderData(data) {
     </div>`
   })
   query('.playlist').innerHTML = html.join('')
-
-  loadCurrentSong(data, currentIndex)
+  loadSong(data, currentIndex)
+  songs.push(...data)
 }
 
-function loadCurrentSong(songs, id) {
+function loadSong(songs, id) {
   const audio = query('#audio')
   // add active
   query('.song').classList.add('active')

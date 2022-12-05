@@ -60,6 +60,7 @@ body {
       color: $text-color;
       padding: 18px;
       font-size: 18px;
+      cursor: pointer;
       &.active {
         color: $color-primary;
       }
